@@ -1,0 +1,8 @@
+[project]
+name = "ballsdex-role-reward"
+version = "1.0.3"
+
+description = "Role reward based on completion progression."
+authors = [
+    { name = "Seif", email = "seiftheman1@gmail.com" },
+]
