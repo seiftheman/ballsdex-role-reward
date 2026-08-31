@@ -4,7 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 from django.db.models import Count
-
+from role_reward.models import get_settings
 from bd_models.models import Ball, BallInstance
 
 log = logging.getLogger("ballsdex.packages.role_reward")
@@ -14,8 +14,10 @@ class ProgressionRoleCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.server_id = 1433459095129559170
-        self.role_id = 1531401707500601425
+        settings = get_settings()
+        server_id = settings.guild()
+        role_id = settings.role()
+        progression = settings.progression()
         self.check_progression.start()
 
     def cog_unload(self):
@@ -26,16 +28,15 @@ class ProgressionRoleCog(commands.Cog):
         if role in member.roles:
             return False
 
-        # Get the number of distinct balls owned by the user
         owned_countryballs_count = await BallInstance.objects.filter(
             player__discord_id=member.id, ball__enabled=True
         ).values("ball_id").distinct().acount()
 
         progression = owned_countryballs_count / total_balls if total_balls > 0 else 0
-        if progression >= 0.5:
+        if progression >= self.progression:
             try:
-                await member.add_roles(role, reason="Progression reached 50% or more.")
-                log.info(f"Granted progression role to {member.id}.")
+                await member.add_roles(role, reason="Reached the required progression.")
+                log.info(f"Granted progression reward role to {member.id}.")
                 return True
             except discord.Forbidden:
                 log.error("Failed to add role due to missing permissions.")
@@ -78,8 +79,8 @@ class ProgressionRoleCog(commands.Cog):
             
             if member and role not in member.roles:
                 try:
-                    await member.add_roles(role, reason="Progression reached 0.5% or more.")
-                    log.info(f"Granted progression role to {member.id}.")
+                    await member.add_roles(role, reason="Reached the required progression.")
+                    log.info(f"Granted progression reward role to {member.id}.")
                 except discord.HTTPException:
                     pass
 
@@ -88,23 +89,15 @@ class ProgressionRoleCog(commands.Cog):
     async def hello(self, ctx: commands.Context):
         """Manually trigger the progression role check for the server."""
         if ctx.guild and ctx.guild.id != self.server_id:
-            await ctx.send("This command can only be used in the designated server.")
             return
             
         guild = self.bot.get_guild(self.server_id)
-        if not guild:
-            await ctx.send("Guild not found.")
-            return
-
         role = guild.get_role(self.role_id)
         if not role:
             await ctx.send("The reward role is not configured correctly on the server.")
             return
 
         total_balls = await Ball.objects.filter(enabled=True).acount()
-        if total_balls == 0:
-            await ctx.send("There are no countryballs registered yet.")
-            return
 
         import math
         target_count = math.ceil(total_balls * 0.005)
@@ -137,14 +130,14 @@ class ProgressionRoleCog(commands.Cog):
                 already_have += 1
             else:
                 try:
-                    await member.add_roles(role, reason="Progression reached 0.5% or more (manual check).")
-                    log.info(f"Granted progression role to {member.id}.")
+                    await member.add_roles(role, reason="Reached the required progression.")
+                    log.info(f"Granted progression reward role to {member.id}.")
                     given += 1
                 except discord.HTTPException:
                     pass
 
         await status_msg.edit(content=f"Role check complete (Target: {target_count}/{total_balls} balls).\n"
-                                      f"- Total eligible players in DB: {len(players_with_enough_balls)}\n"
-                                      f"- Already have the role: {already_have}\n"
-                                      f"- Not found in server: {not_found}\n"
-                                      f"- Newly assigned the role to: {given} members.")
+                                      f"Total eligible players in DB: {len(players_with_enough_balls)}\n"
+                                      f"Already have the role: {already_have}\n"
+                                      f"Not found in server: {not_found}\n"
+                                      f"Newly assigned the role to: {given} members.")
