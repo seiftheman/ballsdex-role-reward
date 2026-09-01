@@ -15,7 +15,7 @@ class ProgressionRoleCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         settings = get_settings()
-        server_id = settings.guild()
+        server_id = settings.server()
         role_id = settings.role()
         progression = settings.progression()
         self.check_progression.start()
