@@ -7,7 +7,6 @@ from django.db import models
 from django.forms import ValidationError
 
 DISCORD_ID_RE = re.compile(r"^\d{17,21}$")
-COLON_IDS_RE = re.compile(r"^(\d{17,21}(;\d{17,21})*)?$")
 
 
 class RoleRewardSettings(models.Model):

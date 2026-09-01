@@ -15,5 +15,5 @@ class RoleRewardSettingsAdmin(admin.ModelAdmin):
     save_on_top = True
     formfield_overrides = {models.TextField: {"widget": widgets.TextInput}}
     fieldsets = [
-        (None, {"fields": ("guild", "role", "progression")}),
+        (None, {"fields": ("server", "role", "progression")}),
     ]
