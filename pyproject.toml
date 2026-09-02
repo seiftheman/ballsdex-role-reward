@@ -1,6 +1,6 @@
 [project]
 name = "ballsdex-role-reward"
-version = "1.0.5"
+version = "1.0.6"
 
 description = "Role reward based on completion progression."
 authors = [

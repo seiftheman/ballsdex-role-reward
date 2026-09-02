@@ -19,13 +19,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Read version from pyproject.toml
+      - name: Read version from pyproject.toml.
         id: version
         run: |
           VERSION=$(grep -m1 '^version' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Check if version increased
+      - name: Check if version increased.
         id: check
         run: |
           VERSION="${{ steps.version.outputs.version }}"
@@ -54,7 +54,7 @@ jobs:
             echo "should_release=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create GitHub release
+      - name: Create GitHub release.
         if: steps.check.outputs.should_release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -65,11 +65,11 @@ jobs:
             --title "v$VERSION" \
             --generate-notes
 
-      - name: Update README with version pin
+      - name: Update README with version pin.
         if: steps.check.outputs.should_release == 'true'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          sed -i "s|git+https://github.com/seiftheman/ballsdex-tutorial.git.*#main|git+https://github.com/seiftheman/ballsdex-tutorial.git@v${VERSION}#main|g" README.md
+          sed -i "s|git+https://github.com/seiftheman/ballsdex-role-reward.git.*#main|git+https://github.com/seiftheman/ballsdex-role-reward.git@v${VERSION}#main|g" README.md
 
       - name: Commit and push README update
         if: steps.check.outputs.should_release == 'true'
