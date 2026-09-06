@@ -8,10 +8,11 @@ Add the following into your `config/extra.toml` file.
 
 ```toml
 [[ballsdex.packages]]
-location = "git+https://github.com/seiftheman/ballsdex-role-reward.git@v1.0.7#main"
+location = "git+https://github.com/seiftheman/ballsdex-role-reward.git@v1.0.9#main"
 path = "role_reward"
 enabled = true
 ```
+
 ## Contact
 
 - You can contact me via the **official Discord server**.  

@@ -31,5 +31,5 @@ class RoleRewardSettings(models.Model):
     class Meta:
         verbose_name_plural = "Settings"
 
-async def get_settings():
-    return await RoleRewardSettings.objects.afirst() or await RoleRewardSettings.objects.acreate()
+async def get_settings() -> RoleRewardSettings | None:
+    return await RoleRewardSettings.objects.afirst()
