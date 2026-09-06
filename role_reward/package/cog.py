@@ -1,10 +1,7 @@
 import logging
-import asyncio
 import discord
-from discord import app_commands
 from discord.ext import commands, tasks
 from django.db.models import Count
-from role_reward.models import get_settings
 from bd_models.models import Ball, BallInstance
 
 log = logging.getLogger("ballsdex.packages.role_reward")
@@ -12,12 +9,11 @@ log = logging.getLogger("ballsdex.packages.role_reward")
 class ProgressionRoleCog(commands.Cog):
     """Role reward commands."""
 
-    def __init__(self, bot):
+    def __init__(self, bot, *, server_id: int, role_id: int, progression: float):
         self.bot = bot
-        settings = get_settings()
-        server_id = settings.server()
-        role_id = settings.role()
-        progression = settings.progression()
+        self.server_id = server_id
+        self.role_id = role_id
+        self.progression = progression
         self.check_progression.start()
 
     def cog_unload(self):
