@@ -21,6 +21,7 @@ class RoleRewardSettings(models.Model):
     progression = models.FloatField(
         help_text="Progression of the bot required for users to be given the reward role."
     )
+
     def clean(self) -> None:
         if RoleRewardSettings.objects.exclude(pk=self.pk).exists():
             raise ValidationError("You can only have one instance of RoleRewardSettings.")

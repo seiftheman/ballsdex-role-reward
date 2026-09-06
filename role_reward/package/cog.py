@@ -1,139 +1,211 @@
 import logging
+import math
+from dataclasses import dataclass
+
 import discord
 from discord.ext import commands, tasks
 from django.db.models import Count
+from django.db.models.signals import post_delete, post_save
+
 from bd_models.models import Ball, BallInstance
+from role_reward.models import RoleRewardSettings, get_settings
 
 log = logging.getLogger("ballsdex.packages.role_reward")
 
-class ProgressionRoleCog(commands.Cog):
-    """Role reward commands."""
 
-    def __init__(self, bot, *, server_id: int, role_id: int, progression: float):
+@dataclass(slots=True)
+class ProgressionCheckResult:
+    total_balls: int = 0
+    target_count: int = 0
+    eligible_players: int = 0
+    granted: int = 0
+    already_have_role: int = 0
+    members_not_found: int = 0
+    assignment_failures: int = 0
+    error: str | None = None
+
+
+class ProgressionRoleCog(commands.Cog):
+    """Award a role to players who meet the configured collection progression."""
+
+    def __init__(self, bot):
         self.bot = bot
-        self.server_id = server_id
-        self.role_id = role_id
-        self.progression = progression
+        self.server_id: int | None = None
+        self.role_id: int | None = None
+        self.progression: float | None = None
+        post_save.connect(
+            self._settings_saved,
+            sender=RoleRewardSettings,
+            dispatch_uid="role_reward.progression_role_settings_saved",
+            weak=False,
+        )
+        post_delete.connect(
+            self._settings_deleted,
+            sender=RoleRewardSettings,
+            dispatch_uid="role_reward.progression_role_settings_deleted",
+            weak=False,
+        )
         self.check_progression.start()
 
     def cog_unload(self):
         self.check_progression.cancel()
+        post_save.disconnect(
+            sender=RoleRewardSettings,
+            dispatch_uid="role_reward.progression_role_settings_saved",
+        )
+        post_delete.disconnect(
+            sender=RoleRewardSettings,
+            dispatch_uid="role_reward.progression_role_settings_deleted",
+        )
 
-    async def _check_and_reward_user(self, member: discord.Member, guild: discord.Guild, role: discord.Role, total_balls: int) -> bool:
-        """Returns True if the role was given."""
-        if role in member.roles:
+    def _settings_saved(self, sender, instance: RoleRewardSettings, **kwargs):
+        self.bot.loop.call_soon_threadsafe(self._apply_settings, instance)
+
+    def _settings_deleted(self, sender, **kwargs):
+        self.bot.loop.call_soon_threadsafe(self._clear_settings)
+
+    def _apply_settings(self, settings: RoleRewardSettings):
+        try:
+            self.server_id = int(settings.server)
+            self.role_id = int(settings.role)
+            self.progression = settings.progression
+        except (TypeError, ValueError):
+            self._clear_settings()
+            log.error("Role reward settings contain invalid Discord IDs.")
+            return
+
+        log.info(
+            "Loaded role reward settings for guild %s: role %s at %.2f%% progression.",
+            self.server_id,
+            self.role_id,
+            self.progression * 100,
+        )
+
+    def _clear_settings(self):
+        self.server_id = None
+        self.role_id = None
+        self.progression = None
+
+    async def reload_settings(self) -> bool:
+        settings = await get_settings()
+        if settings is None:
+            self._clear_settings()
             return False
 
-        owned_countryballs_count = await BallInstance.objects.filter(
-            player__discord_id=member.id, ball__enabled=True
-        ).values("ball_id").distinct().acount()
+        self._apply_settings(settings)
+        return self.server_id is not None and self.role_id is not None and self.progression is not None
 
-        progression = owned_countryballs_count / total_balls if total_balls > 0 else 0
-        if progression >= self.progression:
+    async def _run_progression_check(self) -> ProgressionCheckResult:
+        if self.server_id is None or self.role_id is None or self.progression is None:
+            return ProgressionCheckResult(error="Role reward settings have not been configured.")
+
+        guild = self.bot.get_guild(self.server_id)
+        if guild is None:
+            return ProgressionCheckResult(error="The configured server is unavailable to the bot.")
+
+        role = guild.get_role(self.role_id)
+        if role is None:
+            return ProgressionCheckResult(error="The configured reward role was not found in the server.")
+
+        total_balls = await Ball.objects.filter(enabled=True).acount()
+        if total_balls == 0:
+            return ProgressionCheckResult(error="There are no enabled balls to calculate progression from.")
+
+        target_count = math.ceil(total_balls * self.progression)
+        eligible_player_ids = [
+            player["player__discord_id"]
+            async for player in BallInstance.objects.filter(ball__enabled=True)
+            .values("player__discord_id")
+            .annotate(distinct_balls=Count("ball_id", distinct=True))
+            .order_by()
+            .filter(distinct_balls__gte=target_count)
+        ]
+        result = ProgressionCheckResult(
+            total_balls=total_balls,
+            target_count=target_count,
+            eligible_players=len(eligible_player_ids),
+        )
+
+        for discord_id in eligible_player_ids:
+            member = guild.get_member(discord_id)
+            if member is None:
+                try:
+                    member = await guild.fetch_member(discord_id)
+                except discord.NotFound:
+                    result.members_not_found += 1
+                    continue
+                except discord.HTTPException:
+                    result.assignment_failures += 1
+                    log.exception("Failed to fetch member %s for a role reward check.", discord_id)
+                    continue
+
+            if role in member.roles:
+                result.already_have_role += 1
+                continue
+
             try:
                 await member.add_roles(role, reason="Reached the required progression.")
-                log.info(f"Granted progression reward role to {member.id}.")
-                return True
             except discord.Forbidden:
-                log.error("Failed to add role due to missing permissions.")
-            except discord.HTTPException as e:
-                log.error(f"Failed to add role due to HTTP error: {e}")
-        return False
+                result.assignment_failures += 1
+                log.error("Cannot grant the progression reward role to %s due to missing permissions.", member.id)
+            except discord.HTTPException:
+                result.assignment_failures += 1
+                log.exception("Failed to grant the progression reward role to %s.", member.id)
+            else:
+                result.granted += 1
+                log.info("Granted progression reward role to %s.", member.id)
+
+        log.info(
+            "Progression check: %s enabled balls, %.2f%% required, target %s balls, "
+            "%s eligible, %s granted, %s already rewarded, %s members missing, %s failures.",
+            result.total_balls,
+            self.progression * 100,
+            result.target_count,
+            result.eligible_players,
+            result.granted,
+            result.already_have_role,
+            result.members_not_found,
+            result.assignment_failures,
+        )
+        return result
 
     @tasks.loop(minutes=5)
     async def check_progression(self):
         await self.bot.wait_until_ready()
-        
-        guild = self.bot.get_guild(self.server_id)
-        if not guild:
-            return
-            
-        role = guild.get_role(self.role_id)
-        if not role:
+        if not await self.reload_settings():
+            log.warning("Progression check skipped: Role reward settings have not been configured.")
             return
 
-        total_balls = await Ball.objects.filter(enabled=True).acount()
-        if total_balls == 0:
-            return
-
-        import math
-        target_count = math.ceil(total_balls * 0.005)
-
-        players_with_enough_balls = []
-        async for player_dict in BallInstance.objects.filter(ball__enabled=True).values('player__discord_id').annotate(
-            distinct_balls=Count('ball_id', distinct=True)
-        ).order_by().filter(distinct_balls__gte=target_count):
-            players_with_enough_balls.append(player_dict['player__discord_id'])
-
-        for discord_id in players_with_enough_balls:
-            member = guild.get_member(discord_id)
-            if not member:
-                try:
-                    member = await guild.fetch_member(discord_id)
-                except discord.NotFound:
-                    member = None
-            
-            if member and role not in member.roles:
-                try:
-                    await member.add_roles(role, reason="Reached the required progression.")
-                    log.info(f"Granted progression reward role to {member.id}.")
-                except discord.HTTPException:
-                    pass
+        result = await self._run_progression_check()
+        if result.error:
+            log.warning("Progression check skipped: %s", result.error)
 
     @commands.command()
-    @commands.has_permissions(administrator=True)
+    @commands.is_owner()
     async def hello(self, ctx: commands.Context):
-        """Manually trigger the progression role check for the server."""
-        if ctx.guild and ctx.guild.id != self.server_id:
-            return
-            
-        guild = self.bot.get_guild(self.server_id)
-        role = guild.get_role(self.role_id)
-        if not role:
-            await ctx.send("The reward role is not configured correctly on the server.")
+        """Manually run the progression role check for the configured server."""
+        await self.bot.wait_until_ready()
+        if not await self.reload_settings():
+            await ctx.send("Role reward settings have not been configured yet.")
             return
 
-        total_balls = await Ball.objects.filter(enabled=True).acount()
+        if ctx.guild is None or ctx.guild.id != self.server_id:
+            await ctx.send("This command can only be used in the configured server.")
+            return
 
-        import math
-        target_count = math.ceil(total_balls * 0.005)
+        result = await self._run_progression_check()
+        if result.error:
+            await ctx.send(result.error)
+            return
 
-        players_with_enough_balls = []
-        async for player_dict in BallInstance.objects.filter(ball__enabled=True).values('player__discord_id').annotate(
-            distinct_balls=Count('ball_id', distinct=True)
-        ).order_by().filter(distinct_balls__gte=target_count):
-            players_with_enough_balls.append(player_dict['player__discord_id'])
-
-        given = 0
-        already_have = 0
-        not_found = 0
-        
-        status_msg = await ctx.send(f"Found {len(players_with_enough_balls)} players in the database with >= {target_count}/{total_balls} balls (0.5%). Checking members...")
-
-        for discord_id in players_with_enough_balls:
-            member = guild.get_member(discord_id)
-            if not member:
-                try:
-                    member = await guild.fetch_member(discord_id)
-                except discord.NotFound:
-                    member = None
-                    
-            if not member:
-                not_found += 1
-                continue
-
-            if role in member.roles:
-                already_have += 1
-            else:
-                try:
-                    await member.add_roles(role, reason="Reached the required progression.")
-                    log.info(f"Granted progression reward role to {member.id}.")
-                    given += 1
-                except discord.HTTPException:
-                    pass
-
-        await status_msg.edit(content=f"Role check complete (Target: {target_count}/{total_balls} balls).\n"
-                                      f"Total eligible players in DB: {len(players_with_enough_balls)}\n"
-                                      f"Already have the role: {already_have}\n"
-                                      f"Not found in server: {not_found}\n"
-                                      f"Newly assigned the role to: {given} members.")
+        await ctx.send(
+            "Progression role check complete.\n"
+            f"Enabled balls: {result.total_balls}\n"
+            f"Required progression: {self.progression:.2%}\n"
+            f"Target: {result.target_count}/{result.total_balls} distinct balls\n"
+            f"Eligible players: {result.eligible_players}\n"
+            f"Already rewarded: {result.already_have_role}\n"
+            f"Members not found: {result.members_not_found}\n"
+            f"Newly assigned: {result.granted}\n"
+            f"Failures: {result.assignment_failures}"
+        )
