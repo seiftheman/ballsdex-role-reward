@@ -1,5 +1,4 @@
 import logging
-import math
 from dataclasses import dataclass
 
 import discord
@@ -9,6 +8,7 @@ from django.db.models.signals import post_delete, post_save
 
 from bd_models.models import Ball, BallInstance
 from role_reward.models import RoleRewardSettings, get_settings
+from role_reward.progression import required_distinct_balls
 
 log = logging.getLogger("ballsdex.packages.role_reward")
 
@@ -66,13 +66,25 @@ class ProgressionRoleCog(commands.Cog):
 
     def _apply_settings(self, settings: RoleRewardSettings):
         try:
-            self.server_id = int(settings.server)
-            self.role_id = int(settings.role)
-            self.progression = settings.progression
+            server_id = int(settings.server)
+            role_id = int(settings.role)
+            progression = float(settings.progression)
         except (TypeError, ValueError):
             self._clear_settings()
-            log.error("Role reward settings contain invalid Discord IDs.")
+            log.error("Role reward settings contain invalid values.")
             return
+
+        if not 0 < progression <= 1:
+            self._clear_settings()
+            log.error(
+                "Role reward progression must be greater than 0%% and at most 100%% (got %.2f%%).",
+                progression * 100,
+            )
+            return
+
+        self.server_id = server_id
+        self.role_id = role_id
+        self.progression = progression
 
         log.info(
             "Loaded role reward settings for guild %s: role %s at %.2f%% progression.",
@@ -99,6 +111,7 @@ class ProgressionRoleCog(commands.Cog):
         if self.server_id is None or self.role_id is None or self.progression is None:
             return ProgressionCheckResult(error="Role reward settings have not been configured.")
 
+        progression = self.progression
         guild = self.bot.get_guild(self.server_id)
         if guild is None:
             return ProgressionCheckResult(error="The configured server is unavailable to the bot.")
@@ -107,11 +120,25 @@ class ProgressionRoleCog(commands.Cog):
         if role is None:
             return ProgressionCheckResult(error="The configured reward role was not found in the server.")
 
+        bot_member = guild.me
+        if bot_member is None or not bot_member.guild_permissions.manage_roles:
+            return ProgressionCheckResult(
+                error="The bot needs the 'Manage Roles' permission in the configured server."
+            )
+        if role.is_default() or role.managed or role >= bot_member.top_role:
+            return ProgressionCheckResult(
+                error="The reward role is managed by Discord or is not below the bot's highest role."
+            )
+
         total_balls = await Ball.objects.filter(enabled=True).acount()
         if total_balls == 0:
             return ProgressionCheckResult(error="There are no enabled balls to calculate progression from.")
 
-        target_count = math.ceil(total_balls * self.progression)
+        try:
+            target_count = required_distinct_balls(total_balls, progression)
+        except ValueError as exc:
+            return ProgressionCheckResult(error=str(exc))
+
         eligible_player_ids = [
             player["player__discord_id"]
             async for player in BallInstance.objects.filter(ball__enabled=True)
@@ -159,7 +186,7 @@ class ProgressionRoleCog(commands.Cog):
             "Progression check: %s enabled balls, %.2f%% required, target %s balls, "
             "%s eligible, %s granted, %s already rewarded, %s members missing, %s failures.",
             result.total_balls,
-            self.progression * 100,
+            progression * 100,
             result.target_count,
             result.eligible_players,
             result.granted,
@@ -180,9 +207,9 @@ class ProgressionRoleCog(commands.Cog):
         if result.error:
             log.warning("Progression check skipped: %s", result.error)
 
-    @commands.command()
+    @commands.command(name="rolereward", aliases=("hello",))
     @commands.is_owner()
-    async def hello(self, ctx: commands.Context):
+    async def role_reward_check(self, ctx: commands.Context):
         """Manually run the progression role check for the configured server."""
         await self.bot.wait_until_ready()
         if not await self.reload_settings():
