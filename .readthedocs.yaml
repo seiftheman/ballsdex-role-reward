@@ -1,5 +1,5 @@
-# Read the Docs configuration file.
-# See https://docs.readthedocs.io/en/stable/config-file/v2.html
+# Read the Docs configuration file for ballsdex-role-reward
+# See https://docs.readthedocs.com/platform/stable/config-file/v2.html
 
 version: 2
 
@@ -8,13 +8,10 @@ build:
   tools:
     python: "3.12"
 
-sphinx:
-  configuration: docs/conf.py
+mkdocs:
+  configuration: mkdocs.yml
+  fail_on_warning: false
 
 python:
   install:
     - requirements: docs/requirements.txt
-
-formats:
-  - pdf
-  - epub

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">ballsdex-role-reward</title>
+  <desc id="desc">A gold check mark on a blue shield, representing a collection milestone reward.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1220"/>
+      <stop offset="0.55" stop-color="#0F1B31"/>
+      <stop offset="1" stop-color="#111C33"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="52%">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.34"/>
+      <stop offset="0.6" stop-color="#2563EB" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shield" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#7DD3FC"/>
+      <stop offset="0.45" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="shieldShade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0F172A" stop-opacity="0.24"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#0F172A" stop-opacity="0.30"/>
+    </linearGradient>
+    <linearGradient id="check" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FEF9C3"/>
+      <stop offset="0.45" stop-color="#FBBF24"/>
+      <stop offset="1" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1E3A8A"/>
+      <stop offset="0.5" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1E3A8A"/>
+    </linearGradient>
+    <clipPath id="iconClip">
+      <rect x="16" y="16" width="480" height="480" rx="112"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#iconClip)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <rect width="512" height="512" fill="url(#glow)"/>
+
+    <circle cx="256" cy="256" r="186" fill="none" stroke="#38BDF8" stroke-opacity="0.12" stroke-width="2"/>
+    <circle cx="256" cy="256" r="212" fill="none" stroke="#38BDF8" stroke-opacity="0.07" stroke-width="2"/>
+
+    <g fill="#E0F2FE">
+      <path d="M380 116l4.2 13.8L398 134l-13.8 4.2L380 152l-4.2-13.8L362 134l13.8-4.2z" opacity="0.85"/>
+      <path d="M130 338l3.2 10.8L144 352l-10.8 3.2L130 366l-3.2-10.8L116 352l10.8-3.2z" opacity="0.55"/>
+      <circle cx="395" cy="302" r="4.5" fill="#FBBF24" opacity="0.9"/>
+      <circle cx="116" cy="190" r="3.5" fill="#67E8F9" opacity="0.75"/>
+      <circle cx="374" cy="388" r="3" fill="#67E8F9" opacity="0.55"/>
+    </g>
+
+    <g transform="rotate(-6 256 250)">
+      <path d="M148 118h216c16 0 28 12 28 28v154c0 74-56 126-136 158-80-32-136-84-136-158V146c0-16 12-28 28-28Z" fill="#020617" opacity="0.42" transform="translate(0 14)"/>
+      <path d="M148 112h216c16 0 28 12 28 28v154c0 74-56 126-136 158-80-32-136-84-136-158V140c0-16 12-28 28-28Z" fill="url(#shield)"/>
+      <path d="M148 112h216c16 0 28 12 28 28v154c0 74-56 126-136 158-80-32-136-84-136-158V140c0-16 12-28 28-28Z" fill="url(#shieldShade)"/>
+      <path d="M148 112h216c16 0 28 12 28 28v154c0 74-56 126-136 158-80-32-136-84-136-158V140c0-16 12-28 28-28Z" fill="none" stroke="#BAE6FD" stroke-opacity="0.42" stroke-width="3"/>
+
+      <path d="M168 140h176c8 0 14 6 14 14v10c0 8-6 14-14 14H168c-8 0-14-6-14-14v-10c0-8 6-14 14-14Z" fill="#0369A1" opacity="0.62"/>
+      <g stroke="#E0F2FE" stroke-opacity="0.34" stroke-width="2" stroke-linecap="round">
+        <path d="M180 146v16M206 146v16M232 146v16M258 146v16M284 146v16M310 146v16M336 146v16"/>
+      </g>
+
+      <path d="M166 190c0-10 8-18 18-18h144c10 0 18 8 18 18v92c0 56-42 96-90 120-48-24-90-64-90-120v-92Z" fill="#020617" opacity="0.28"/>
+
+      <path d="m204 268 34 34 76-88" fill="none" stroke="url(#check)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="m204 268 34 34 76-88" fill="none" stroke="#FFFBEB" stroke-opacity="0.55" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <circle cx="326" cy="210" r="6" fill="#A5F3FC" opacity="0.9"/>
+      <circle cx="184" cy="242" r="4" fill="#FBBF24" opacity="0.85"/>
+    </g>
+
+    <path d="M176 404h160c10 0 18 8 18 18v14c0 10-8 18-18 18H176c-10 0-18-8-18-18v-14c0-10 8-18 18-18Z" fill="url(#ribbon)" opacity="0.88"/>
+    <path d="M184 427h144" stroke="#93C5FD" stroke-opacity="0.36" stroke-width="3" stroke-linecap="round"/>
+
+    <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="2"/>
+  </g>
+</svg>

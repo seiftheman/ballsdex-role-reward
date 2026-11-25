@@ -1,0 +1,69 @@
+site_name: ballsdex-role-reward
+site_url: https://ballsdex-role-reward.readthedocs.io/
+site_description: Progression-based Discord role rewards for BallsDex.
+site_author: Seif
+repo_url: https://github.com/seiftheman/ballsdex-role-reward
+repo_name: seiftheman/ballsdex-role-reward
+edit_uri: edit/main/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  language: en
+  logo: assets/logo-256.png
+  favicon: assets/logo.svg
+  font: false
+  palette:
+    scheme: slate
+    primary: custom
+    accent: custom
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Commands: commands.md
+  - Configuration: configuration.md
+  - Troubleshooting: troubleshooting.md
+  - Development: development.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/seiftheman/ballsdex-role-reward
+      name: GitHub
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/Sagg5CejWX
+      name: Support server
+
+copyright: Built for BallsDex 3.0+ · MIT License

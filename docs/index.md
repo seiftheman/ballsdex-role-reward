@@ -1,20 +1,147 @@
-# ballsdex-role-reward
+---
+hide:
+  - navigation
+  - toc
+---
 
-A [BallsDex](https://github.com/BallsDex-DiscordBot/BallsDex-DiscordBot) package
-that grants a Discord role to players who reach a configured collection
-progression — for example, giving access to a channel where other dexes spawn.
+<div class="home-page">
 
-## Features
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="hero-eyebrow">BallsDex 3.0+ · Django admin</p>
+        <h1>Roles worth<br><span class="gradient-text">earning.</span></h1>
+        <p class="hero-lede">
+          A progression-based role reward package for BallsDex. Set a collection
+          threshold in the Django admin and let the bot <strong>grant a role
+          automatically</strong> every five minutes.
+        </p>
+        <div class="hero-actions">
+          <a class="md-button md-button--primary" href="installation/">Install v1.3.0</a>
+          <a class="md-button" href="https://github.com/seiftheman/ballsdex-role-reward/releases">View releases</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong>5 min</strong><span>Check interval</span></div>
+          <div class="hero-stat"><strong>1 row</strong><span>Admin settings</span></div>
+          <div class="hero-stat"><strong>v1.3.0</strong><span>Current release</span></div>
+        </div>
+      </div>
 
-- Configurable server, reward role, and progression threshold in the Django admin.
-- Live settings reload when the settings row is saved or deleted.
-- Automatic checks every 5 minutes, plus an owner-only manual check command.
-- Permission and role-hierarchy validation before any roles are assigned.
-- Detailed counters for granted, skipped, missing, and failed assignments.
+      <div class="shop-scene" aria-hidden="true">
+        <div class="floating-tag one">Live settings reload</div>
+        <div class="shop-preview">
+          <div class="shop-topline">
+            <div class="shop-label"><img src="assets/logo-256.png" alt="">Reward settings</div>
+            <span class="live-badge">Active</span>
+          </div>
+          <div class="shop-card">
+            <div class="shop-eyebrow">Eligible now</div>
+            <h3>Collection milestone</h3>
+            <p>1% of enabled balls unlocks the access role.</p>
+            <div class="shop-row"><span>Enabled balls</span><span>240</span></div>
+            <div class="shop-row"><span>Required progression</span><span class="price">1.00%</span></div>
+            <div class="shop-row"><span>Target</span><span>3/240 distinct</span></div>
+            <div class="shop-row"><span>Already rewarded</span><span>12 members</span></div>
+            <div class="stock-meter"><span></span></div>
+            <div class="stock-note"><span>12 of 18 rewarded</span><span>67%</span></div>
+          </div>
+          <div class="shop-actions">
+            <div class="shop-button ghost">Server</div>
+            <div class="shop-button buy">Run check</div>
+            <div class="shop-button ghost">Role</div>
+          </div>
+        </div>
+        <div class="floating-tag two">5-minute checks</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="feature-strip">
+    <span>Admin settings</span>
+    <span>Live reload</span>
+    <span>Automatic checks</span>
+    <span>Role validation</span>
+    <span>Owner command</span>
+    <span>Django backed</span>
+  </div>
+
+  <section class="home-section">
+    <p class="section-kicker">Feature set</p>
+    <h2>Rewards that manage themselves.</h2>
+    <p class="section-lede">Configure one settings row, choose a collection threshold, and let the package handle the rest without restarting the bot.</p>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <h3>Simple admin configuration</h3>
+        <p>One <strong>Role reward settings</strong> row holds the server, reward role, and progression fraction. No separate config file is needed.</p>
+        <span class="card-tag">One settings row</span>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+        </div>
+        <h3>Live settings reload</h3>
+        <p>Saving or deleting the settings row updates the running check immediately through Django signals.</p>
+        <span class="card-tag">No restart needed</span>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Automatic checks</h3>
+        <p>Every five minutes the cog recalculates eligibility and grants the reward role to qualifying players.</p>
+        <span class="card-tag">Every 5 minutes</span>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.7 3.2 8.1 7.5 9.5 4.3-1.4 7.5-4.8 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h3>Safe role validation</h3>
+        <p>Before assigning anything, the bot checks permissions, role hierarchy, and whether the role is managed or <code>@everyone</code>.</p>
+        <span class="card-tag">Permission aware</span>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>
+        </div>
+        <h3>Clear progress maths</h3>
+        <p>Eligibility uses distinct enabled balls and rounds the target up, so even a small percentage requires at least one ball.</p>
+        <span class="card-tag">Ceiled target</span>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.2 6.8H21l-5.5 4 2.1 6.7-5.6-4.1L6.4 20.5l2.1-6.7-5.5-4h6.8L12 3Z"/></svg>
+        </div>
+        <h3>Owner-only manual check</h3>
+        <p>Run <code>rolereward</code> in the configured server for an immediate report. The old <code>hello</code> alias is kept for compatibility.</p>
+        <span class="card-tag">Detailed counters</span>
+      </article>
+    </div>
+
+    <div class="release-band">
+      <div>
+        <h3>New in v1.3.0</h3>
+        <p>Stronger settings validation, safer reward checks, and a full test suite.</p>
+      </div>
+      <a class="md-button" href="https://github.com/seiftheman/ballsdex-role-reward/releases/tag/v1.3.0">Read release notes</a>
+    </div>
+  </section>
+
+</div>
+
+<div class="home-section home-quickstart" markdown>
 
 ## Quick start
 
-Add the package to `config/extra.toml`:
+Add the package to your BallsDex `config/extra.toml`:
 
 ```toml
 [[ballsdex.packages]]
@@ -23,22 +150,11 @@ path = "role_reward"
 enabled = true
 ```
 
-Restart the bot, then create a single **Role reward settings** row in the Django
-admin panel. See {doc}`installation` and {doc}`configuration` for details.
+Restart the bot once so Django applies the package migrations. Then open the Django
+admin panel and create a single **Role reward settings** row.
 
-```{toctree}
-:maxdepth: 2
-:caption: Guide
+[Installation guide](installation.md){ .md-button .md-button--primary }
+[Command reference](commands.md){ .md-button }
+[Configuration](configuration.md){ .md-button }
 
-installation
-configuration
-commands
-troubleshooting
-development
-```
-
-## Links
-
-- [GitHub repository](https://github.com/seiftheman/ballsdex-role-reward)
-- [Releases](https://github.com/seiftheman/ballsdex-role-reward/releases)
-- [Support server](https://discord.gg/Sagg5CejWX)
+</div>

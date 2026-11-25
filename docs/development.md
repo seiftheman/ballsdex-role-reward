@@ -9,7 +9,9 @@ python -m pip install -e .
 python -m pip install pytest pytest-asyncio
 ```
 
-Django and discord.py are provided by the BallsDex host installation.
+Django and discord.py are provided by the BallsDex host installation. The test suite
+configures an in-memory SQLite database and stubs the BallsDex-only `bd_models` import, so
+it can run without a full bot deployment.
 
 ## Running tests
 
@@ -17,8 +19,8 @@ Django and discord.py are provided by the BallsDex host installation.
 python -m pytest -q
 ```
 
-The test suite configures an in-memory SQLite database and stubs the
-BallsDex-only `bd_models` import, so it can run without a full bot deployment.
+The suite covers settings validation, the progression threshold calculation, and the
+cog's role assignment workflow.
 
 ## Database migrations
 
@@ -33,18 +35,24 @@ Run `makemigrations --check --dry-run` in CI to catch missing migrations.
 
 ## Building these docs locally
 
+Install the documentation dependencies and build the MkDocs site:
+
 ```bash
 python -m pip install -r docs/requirements.txt
-sphinx-build -b html docs docs/_build/html
+mkdocs build --strict
 ```
 
-Open `docs/_build/html/index.html` in a browser. On Linux and macOS you can
-also run `make -C docs html`.
+Serve it locally with live reload while editing:
+
+```bash
+mkdocs serve
+```
+
+Open <http://127.0.0.1:8000/> in a browser. The generated `site/` directory is ignored by
+Git.
 
 ## Read the Docs
 
-The site is configured through `.readthedocs.yaml` at the repository root.
-Connect the GitHub repository to [Read the Docs](https://readthedocs.io/) and
-the default branch will be built and published automatically on every push.
-The version number in `docs/conf.py` is read from `pyproject.toml`, so released
-documentation stays in sync with the package version.
+The site is configured through `.readthedocs.yaml` at the repository root. It builds the
+default branch with MkDocs Material on Read the Docs and publishes to
+<https://ballsdex-role-reward.readthedocs.io/> on every push.
