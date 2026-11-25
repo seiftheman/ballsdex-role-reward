@@ -46,6 +46,10 @@ rolereward
 The old `hello` command remains available as an alias. The output summarises
 how many players were eligible, how many roles were granted, and any failures.
 
+## Documentation
+
+Full documentation is hosted on [Read the Docs](https://ballsdex-role-reward.readthedocs.io/).
+
 ## Development
 
 Install the development dependencies (`pytest`, `pytest-asyncio`, `Django` and
