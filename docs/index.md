@@ -146,7 +146,7 @@ hide:
 
 ## Quick start { .reveal-item }
 
-Add the package to your BallsDex `config/extra.toml`: { .reveal-item }
+Add the package to your BallsDex `config/extra.toml`:
 
 ```toml
 [[ballsdex.packages]]
