@@ -1,0 +1,156 @@
+/* Homepage entrance animations inspired by alnaqeeb.com */
+
+@keyframes alnaqeebSlideUp {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes alnaqeebFade {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes alnaqeebSlideUpDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-30%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Sections slide in from the top; their contents rise into place. */
+
+html.js .reveal-section {
+  opacity: 0;
+}
+
+html.js .reveal-section.active {
+  animation: alnaqeebSlideUp 1.2s ease-out both;
+}
+
+html.js .reveal-section.active .reveal-item,
+html.js .reveal-section.active > h1,
+html.js .reveal-section.active > h2,
+html.js .reveal-section.active > h3,
+html.js .reveal-section.active > p,
+html.js .reveal-section.active .md-button {
+  animation: alnaqeebFade 0.8s 0.3s ease-out both;
+}
+
+html.js .reveal-section.active .reveal-item:nth-child(1) { animation-delay: 0.30s; }
+html.js .reveal-section.active .reveal-item:nth-child(2) { animation-delay: 0.45s; }
+html.js .reveal-section.active .reveal-item:nth-child(3) { animation-delay: 0.60s; }
+html.js .reveal-section.active .reveal-item:nth-child(4) { animation-delay: 0.75s; }
+html.js .reveal-section.active .reveal-item:nth-child(5) { animation-delay: 0.90s; }
+html.js .reveal-section.active .reveal-item:nth-child(6) { animation-delay: 1.05s; }
+html.js .reveal-section.active .reveal-item:nth-child(7) { animation-delay: 1.20s; }
+html.js .reveal-section.active .reveal-item:nth-child(8) { animation-delay: 1.35s; }
+
+html.js .feature-strip.active span {
+  animation: alnaqeebFade 0.8s 0.3s ease-out both;
+}
+
+html.js .feature-strip.active span:nth-child(1) { animation-delay: 0.30s; }
+html.js .feature-strip.active span:nth-child(2) { animation-delay: 0.42s; }
+html.js .feature-strip.active span:nth-child(3) { animation-delay: 0.54s; }
+html.js .feature-strip.active span:nth-child(4) { animation-delay: 0.66s; }
+html.js .feature-strip.active span:nth-child(5) { animation-delay: 0.78s; }
+html.js .feature-strip.active span:nth-child(6) { animation-delay: 0.90s; }
+
+html.js .reveal-section.active > pre {
+  animation: alnaqeebFade 0.8s 0.45s ease-out both;
+}
+
+/* Scroll cue */
+
+.home-page .hero {
+  position: relative;
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 0.85rem;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--brand-muted-2);
+  font-size: 0.55rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.scroll-cue svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--brand-cyan);
+  animation: alnaqeebSlideUpDown 1.5s ease-out infinite;
+}
+
+/* Animated navigation underline and header state */
+
+.md-header {
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.md-header[data-md-state="shadow"] {
+  background: rgba(5, 8, 18, 0.94);
+}
+
+.md-tabs__link {
+  position: relative;
+}
+
+.md-tabs__link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--brand-cyan);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+
+.md-tabs__link--active::after,
+.md-tabs__link:hover::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal-section,
+  html.js .reveal-section.active,
+  html.js .reveal-section.active .reveal-item,
+  html.js .reveal-section.active .md-button,
+  html.js .reveal-section.active > pre,
+  html.js .feature-strip.active span,
+  .scroll-cue svg {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

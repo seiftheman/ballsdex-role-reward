@@ -6,21 +6,21 @@ hide:
 
 <div class="home-page">
 
-  <section class="hero">
+  <section class="hero reveal-section">
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="hero-eyebrow">BallsDex 3.0+ · Django admin</p>
-        <h1>Roles worth<br><span class="gradient-text">earning.</span></h1>
-        <p class="hero-lede">
+        <p class="hero-eyebrow reveal-item">BallsDex 3.0+ · Django admin</p>
+        <h1 class="reveal-item">Roles worth<br><span class="gradient-text">earning.</span></h1>
+        <p class="hero-lede reveal-item">
           A progression-based role reward package for BallsDex. Set a collection
           threshold in the Django admin and let the bot <strong>grant a role
           automatically</strong> every five minutes.
         </p>
-        <div class="hero-actions">
+        <div class="hero-actions reveal-item">
           <a class="md-button md-button--primary" href="installation/">Install v1.3.0</a>
           <a class="md-button" href="https://github.com/seiftheman/ballsdex-role-reward/releases">View releases</a>
         </div>
-        <div class="hero-stats">
+        <div class="hero-stats reveal-item">
           <div class="hero-stat"><strong>5 min</strong><span>Check interval</span></div>
           <div class="hero-stat"><strong>1 row</strong><span>Admin settings</span></div>
           <div class="hero-stat"><strong>v1.3.0</strong><span>Current release</span></div>
@@ -54,9 +54,14 @@ hide:
         <div class="floating-tag two">5-minute checks</div>
       </div>
     </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Scroll to explore</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v14m-6-6 6 6 6-6"/></svg>
+    </div>
   </section>
 
-  <div class="feature-strip">
+  <div class="feature-strip reveal-section">
     <span>Admin settings</span>
     <span>Live reload</span>
     <span>Automatic checks</span>
@@ -65,13 +70,13 @@ hide:
     <span>Django backed</span>
   </div>
 
-  <section class="home-section">
-    <p class="section-kicker">Feature set</p>
-    <h2>Rewards that manage themselves.</h2>
-    <p class="section-lede">Configure one settings row, choose a collection threshold, and let the package handle the rest without restarting the bot.</p>
+  <section class="home-section reveal-section">
+    <p class="section-kicker reveal-item">Feature set</p>
+    <h2 class="reveal-item">Rewards that manage themselves.</h2>
+    <p class="section-lede reveal-item">Configure one settings row, choose a collection threshold, and let the package handle the rest without restarting the bot.</p>
 
     <div class="feature-grid">
-      <article class="feature-card">
+      <article class="feature-card reveal-item">
         <div class="feature-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
         </div>
@@ -80,7 +85,7 @@ hide:
         <span class="card-tag">One settings row</span>
       </article>
 
-      <article class="feature-card">
+      <article class="feature-card reveal-item">
         <div class="feature-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
         </div>
@@ -89,7 +94,7 @@ hide:
         <span class="card-tag">No restart needed</span>
       </article>
 
-      <article class="feature-card">
+      <article class="feature-card reveal-item">
         <div class="feature-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
         </div>
@@ -98,7 +103,7 @@ hide:
         <span class="card-tag">Every 5 minutes</span>
       </article>
 
-      <article class="feature-card">
+      <article class="feature-card reveal-item">
         <div class="feature-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.7 3.2 8.1 7.5 9.5 4.3-1.4 7.5-4.8 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg>
         </div>
@@ -107,7 +112,7 @@ hide:
         <span class="card-tag">Permission aware</span>
       </article>
 
-      <article class="feature-card">
+      <article class="feature-card reveal-item">
         <div class="feature-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>
         </div>
@@ -116,7 +121,7 @@ hide:
         <span class="card-tag">Ceiled target</span>
       </article>
 
-      <article class="feature-card">
+      <article class="feature-card reveal-item">
         <div class="feature-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.2 6.8H21l-5.5 4 2.1 6.7-5.6-4.1L6.4 20.5l2.1-6.7-5.5-4h6.8L12 3Z"/></svg>
         </div>
@@ -126,7 +131,7 @@ hide:
       </article>
     </div>
 
-    <div class="release-band">
+    <div class="release-band reveal-item">
       <div>
         <h3>New in v1.3.0</h3>
         <p>Stronger settings validation, safer reward checks, and a full test suite.</p>
@@ -137,11 +142,11 @@ hide:
 
 </div>
 
-<div class="home-section home-quickstart" markdown>
+<div class="home-section home-quickstart reveal-section" markdown>
 
-## Quick start
+## Quick start { .reveal-item }
 
-Add the package to your BallsDex `config/extra.toml`:
+Add the package to your BallsDex `config/extra.toml`: { .reveal-item }
 
 ```toml
 [[ballsdex.packages]]

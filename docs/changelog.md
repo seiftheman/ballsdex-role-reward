@@ -6,6 +6,8 @@
 
 - MkDocs Material documentation site on Read the Docs with installation, command,
   configuration, troubleshooting, development, and changelog pages.
+- Alnaqeeb-style homepage entrance animations with staggered content reveals, a bouncing
+  scroll cue, and an animated navigation underline.
 
 ## 1.3.0
 

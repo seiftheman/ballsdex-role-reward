@@ -55,6 +55,10 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/animations.css
+
+extra_javascript:
+  - javascripts/animations.js
 
 extra:
   generator: false
